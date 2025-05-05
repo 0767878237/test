@@ -12,6 +12,8 @@ import subprocess
 from django.contrib import messages
 from django.db import connection
 from crawl_runner import create_and_run_task
+from django.core.exceptions import ObjectDoesNotExist
+# show main page
 def main(request):
     tasks = CrawlTask.objects.all().order_by('-created_at')  # Lấy dữ liệu để hiển thị trong bảng
     return render(request, 'crawler_app/main.html', {'tasks': tasks}) 
@@ -19,10 +21,12 @@ def view(request):
     tasks = CrawlTask.objects.all().order_by('-created_at')
     return render(request, 'crawler_app/view.html', {'tasks': tasks})
 
+# show dashboard page
 def index(request):
     tasks = CrawlTask.objects.all().order_by('-created_at')
     return render(request, 'crawler_app/index.html') 
 
+# create new tasks
 def create_task(request):
     if request.method == 'POST':
         url_filter = request.POST.get('url_filter')  # Lấy giá trị từ form
@@ -33,6 +37,7 @@ def create_task(request):
             return redirect('home')  # Sau khi tạo task xong, redirect về trang chính
     return render(request, 'crawler_app/index.html')  # Nếu không phải POST, render lại trang
 
+# delete tasks
 def delete_crawltask(request, task_id):
     if request.method == 'POST':
         try:
@@ -53,6 +58,16 @@ def reset_crawltask_sequence():
 
         # Cập nhật lại giá trị trong sqlite_sequence để đảm bảo giá trị ID kế tiếp là max_id + 1
         cursor.execute("UPDATE sqlite_sequence SET seq = ? WHERE name = ?", (max_id, 'backend_crawltask'))
+        
+# search tasks
+def search_task(request):
+    task_id = request.GET.get('task_id')
+    task_id = int(task_id)
+    try:
+        task = CrawlTask.objects.filter(id=task_id)
+        return render(request, 'crawler_app/main.html', {'tasks': task})
+    except ObjectDoesNotExist:
+        return render(request, 'crawler_app/main.html', {'error': f'Không tìm thấy task với ID {task_id}'})
 
 import sys
 import threading
