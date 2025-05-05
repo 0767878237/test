@@ -12,6 +12,10 @@ import subprocess
 from django.contrib import messages
 from django.db import connection
 from crawl_runner import create_and_run_task
+from django.core.exceptions import ObjectDoesNotExist
+
+
+
 def index(request):
     tasks = CrawlTask.objects.all().order_by('-created_at')  # Lấy dữ liệu để hiển thị trong bảng
     return render(request, 'crawler_app/index.html', {'tasks': tasks}) 
@@ -49,6 +53,16 @@ def reset_crawltask_sequence():
 
         # Cập nhật lại giá trị trong sqlite_sequence để đảm bảo giá trị ID kế tiếp là max_id + 1
         cursor.execute("UPDATE sqlite_sequence SET seq = ? WHERE name = ?", (max_id, 'backend_crawltask'))
+        
+        
+def search_task(request):
+    task_id = request.GET.get('task_id')
+    task_id = int(task_id)
+    try:
+        task = CrawlTask.objects.filter(id=task_id)
+        return render(request, 'crawler_app/index.html', {'tasks': task})
+    except ObjectDoesNotExist:
+        return render(request, 'crawler_app/index.html', {'error': f'Không tìm thấy task với ID {task_id}'})
 
 import sys
 import threading
