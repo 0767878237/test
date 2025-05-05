@@ -12,12 +12,16 @@ import subprocess
 from django.contrib import messages
 from django.db import connection
 from crawl_runner import create_and_run_task
-def index(request):
+def main(request):
     tasks = CrawlTask.objects.all().order_by('-created_at')  # Lấy dữ liệu để hiển thị trong bảng
-    return render(request, 'crawler_app/index.html', {'tasks': tasks}) 
+    return render(request, 'crawler_app/main.html', {'tasks': tasks}) 
 def view(request):
     tasks = CrawlTask.objects.all().order_by('-created_at')
     return render(request, 'crawler_app/view.html', {'tasks': tasks})
+
+def index(request):
+    tasks = CrawlTask.objects.all().order_by('-created_at')
+    return render(request, 'crawler_app/index.html') 
 
 def create_task(request):
     if request.method == 'POST':
