@@ -26,6 +26,16 @@ def index(request):
     tasks = CrawlTask.objects.all().order_by('-created_at')
     return render(request, 'crawler_app/index.html') 
 
+def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        if username == 'admin' and password == 'admin':
+            return redirect('home')  # Redirect to the main page after successful login
+        else:
+            messages.error(request, 'Invalid username or password.')
+    return render(request, 'crawler_app/sign_up.html')  # Render the login page
+
 # create new tasks
 def create_task(request):
     if request.method == 'POST':

@@ -6,6 +6,7 @@ urlpatterns = [
     path('demo1/dist/apps/user-management/users/view.html', views.view, name='view'),  # Ánh xạ trang 'view'
     path('create-task/', views.create_task, name='create_task'), 
     path('demo1/dist/index.html', views.index, name='dashboard'),
+    path('login/', views.login, name='login'),  # Đường dẫn đến trang đăng nhập
     path('search_task/', views.search_task, name='search_task'),
     path('action-task/<int:task_id>/', views.action_task, name='action_task'),
     path('delete-task/<int:task_id>/', views.delete_crawltask, name='delete_crawltask'), # xóa task
