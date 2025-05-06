@@ -13,10 +13,33 @@ from django.contrib import messages
 from django.db import connection
 from crawl_runner import create_and_run_task
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.cache import never_cache
+from functools import wraps
+
+# block cache and protect views
+def login_required_no_cache(view_func):
+    @wraps(view_func)
+    @never_cache
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.session.get('user_email'):
+            return redirect('sign_in')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+# check email in home page and redirect to sign in page if not logged in
+def require_login(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('user_email'):
+            return redirect('sign_in')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
 # show main page
+@login_required_no_cache
+@require_login
 def main(request):
-    tasks = CrawlTask.objects.all().order_by('-created_at')  # Lấy dữ liệu để hiển thị trong bảng
-    return render(request, 'crawler_app/main.html', {'tasks': tasks}) 
+    user_email = request.session.get('user_email')
+    tasks = CrawlTask.objects.all().order_by('-created_at')
+    return render(request, 'crawler_app/main.html', {'tasks': tasks, 'user_email': user_email})
 def view(request):
     tasks = CrawlTask.objects.all().order_by('-created_at')
     return render(request, 'crawler_app/view.html', {'tasks': tasks})
@@ -179,13 +202,17 @@ def login(request):
         try:
             check = Login.objects.get(email=email)
             if check.password == passw:
-                # Đăng nhập thành công
-                return redirect('home') 
+                # ✅ Lưu thông tin người dùng vào session
+                request.session['user_id'] = check.id
+                request.session['user_email'] = check.email
+                return redirect('home')
+            else:
+                return render(request, 'crawler_app/sign_in.html', {'error': 'Incorrect password!'})
         except Login.DoesNotExist:
-            # Sai email hoặc mật khẩu
-            return render(request, 'login.html', {'error': 'Incorrect email or password!'})
+            return render(request, 'crawler_app/sign_in.html', {'error': 'Email not found!'})
 
     return render(request, 'crawler_app/sign_in.html')
+
 
 #========================= SIGN UP ============================
 def sign_up(request):
@@ -197,6 +224,8 @@ def register_user(request):
         passw = request.POST.get('passw')
         confirm = request.POST.get('c_passw')
         
+        if email == "" or passw == "":
+            return render(request, 'sign_up.html')
         try:
             temp = Login.objects.get(email=email)
         except Login.DoesNotExist:
@@ -212,3 +241,8 @@ def register_user(request):
             return render(request, 'crawler_app/sign_up.html', {'error': 'Email already exists!'})
         
     return render(request, 'crawler_app/sign_in.html')
+
+#========================= LOG OUT ============================
+def logout(request):
+    request.session.flush()  # Xoá toàn bộ session
+    return redirect('sign_in')  # Quay về trang đăng nhập

@@ -10,6 +10,7 @@ urlpatterns = [
     
     path('sign_up/', views.sign_up, name='sign_up'),
     path('register_user/', views.register_user, name='register_user'),
+    path('logout/', views.logout, name='logout'),
     
     path('create-task/', views.create_task, name='create_task'), 
     path('demo1/dist/index.html', views.index, name='dashboard'),
