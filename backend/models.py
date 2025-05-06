@@ -27,3 +27,12 @@ class BusinessData(models.Model):
 
     def __str__(self):
         return f"Business: {self.name} ({self.category})"
+    
+
+class Login(models.Model):
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.email
+    
