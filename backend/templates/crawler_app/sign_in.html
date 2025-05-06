@@ -51,8 +51,7 @@ License: For each use you must have a valid license purchased only from above li
 					<!--begin::Wrapper-->
 					<div class="w-lg-500px bg-body rounded shadow-sm p-10 p-lg-15 mx-auto">
 						<!--begin::Form-->
-						<form method="POST" class="form w-100" novalidate="novalidate" id="kt_sign_in_form" action={% url 'login' %}>
-							{% csrf_token %}
+						<form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" action="#">
 							<!--begin::Heading-->
 							<div class="text-center mb-10">
 								<!--begin::Title-->
@@ -87,7 +86,7 @@ License: For each use you must have a valid license purchased only from above li
 								</div>
 								<!--end::Wrapper-->
 								<!--begin::Input-->
-								<input class="form-control form-control-lg form-control-solid" type="password" name="passw" autocomplete="off" />
+								<input class="form-control form-control-lg form-control-solid" type="password" name="password" autocomplete="off" />
 								<!--end::Input-->
 							</div>
 							<!--end::Input group-->
