@@ -204,3 +204,51 @@ def export_data(request, task_id):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
+
+
+#========================= SIGN IN ============================
+
+
+def sign_in(request):
+    return render(request, 'crawler_app/sign_in.html')
+
+def login(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        passw = request.POST.get('passw')
+        try:
+            check = Login.objects.get(email=email)
+            if check.password == passw:
+                # Đăng nhập thành công
+                return redirect('home') 
+        except Login.DoesNotExist:
+            # Sai email hoặc mật khẩu
+            return render(request, 'login.html', {'error': 'Incorrect email or password!'})
+
+    return render(request, 'crawler_app/sign_in.html')
+
+#========================= SIGN UP ============================
+def sign_up(request):
+    return render(request, 'crawler_app/sign_up.html')
+
+def register_user(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        passw = request.POST.get('passw')
+        confirm = request.POST.get('c_passw')
+        
+        try:
+            temp = Login.objects.get(email=email)
+        except Login.DoesNotExist:
+            temp = None
+            
+        if temp is None:
+            if(passw != confirm):
+                return render(request, 'sign_up.html', {'error': 'Password do not match!'})
+            
+            Login.objects.create(email=email, password=passw)
+            return redirect('home')
+        else:
+            return render(request, 'crawler_app/sign_up.html', {'error': 'Email already exists!'})
+        
+    return render(request, 'crawler_app/sign_in.html')
