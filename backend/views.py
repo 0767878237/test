@@ -223,10 +223,6 @@ def register_user(request):
         email = request.POST.get('email')
         passw = request.POST.get('passw')
         confirm = request.POST.get('c_passw')
-<<<<<<< HEAD
-=======
-        
->>>>>>> fbb86e1e53da82a090560877cdcd6021fa2040ab
         if email == "" or passw == "":
             return render(request, 'sign_up.html')
         try:
