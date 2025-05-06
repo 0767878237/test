@@ -260,34 +260,36 @@ def password_reset_request(request):
         email = request.POST.get('email')
         try:
             user = Login.objects.get(email=email)
-            request.session['reset_email'] = email  # Lưu email vào session
-            return redirect('set_new_password')
+            id = user.id
+            return render(request, 'crawler_app/new_password.html', {'id': id})
         except Login.DoesNotExist:
-            messages.error(request, 'Email không tồn tại trong hệ thống.')
-    return render(request, 'password_reset.html')
+            messages.error(request, 'Email không tồn tại.')
+            return redirect('reset_password')
+    return render(request, 'crawler_app/reset_password.html')
 #========================= NEW PASSWORD ============================
-def set_new_password(request):
-    email = request.session.get('reset_email')
-    if not email:
-        return redirect('password_reset')
-
-    if request.method == 'POST':
-        new_password = request.POST.get('password')
-        try:
-            user = Login.objects.get(email=email)
-            user.password = new_password  # Bạn nên hash nếu có đăng nhập thực tế
-            user.save()
-            messages.success(request, 'Mật khẩu mới đã được đặt thành công.')
-            return redirect('sign_in')  # Trang đăng nhập nếu có
-        except Login.DoesNotExist:
-            messages.error(request, 'Lỗi khi đặt mật khẩu.')
-    return render(request, 'new_password.html', {'email': email})
 def new_password(request):
-    if request.method == 'POST':
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm-password')
-
-        if password != confirm_password:
-            return render(request, 'crawler_app/new_password.html', {'error': 'Passwords do not match!'})
-        return redirect('sign_in')
+    try:
+        if request.method == 'POST':
+            id = request.POST.get('user_id')
+            password = request.POST.get('password')
+            confirm = request.POST.get('confirm-password')
+            user = Login.objects.get(id=id)
+            if password == confirm:
+                user.password = confirm  # Bạn nên mã hóa mật khẩu nếu dùng thật
+                user.save()
+                messages.success(request, 'Đã đặt lại mật khẩu thành công!')
+                return redirect('sign_in')
+            else:
+                messages.error(request, 'Mật khẩu không khớp.')
+    except Login.DoesNotExist:
+        messages.error(request, 'Người dùng không tồn tại.')
     return render(request, 'crawler_app/new_password.html')
+# def new_password(request):
+#     if request.method == 'POST':
+#         password = request.POST.get('password')
+#         confirm_password = request.POST.get('confirm-password')
+
+#         if password != confirm_password:
+#             return render(request, 'crawler_app/new_password.html', {'error': 'Passwords do not match!'})
+#         return redirect('sign_in')
+#     return render(request, 'crawler_app/new_password.html')
