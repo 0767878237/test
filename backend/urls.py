@@ -13,7 +13,7 @@ urlpatterns = [
 
     path('logout/', views.logout, name='logout'),
 
-    path('new_password/', views.new_password, name='new_password'),
+    # path('new_password/', views.new_password, name='new_password'),
     path('new_password/<int:user_id>/<str:token>/', views.new_password, name='new_password'),
 
     path('reset_password/', views.reset_password, name='reset_password'),
