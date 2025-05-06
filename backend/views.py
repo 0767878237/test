@@ -207,7 +207,7 @@ def register_user(request):
                 return render(request, 'sign_up.html', {'error': 'Password do not match!'})
             
             Login.objects.create(email=email, password=passw)
-            return redirect('home')
+            return redirect('sign_in')
         else:
             return render(request, 'crawler_app/sign_up.html', {'error': 'Email already exists!'})
         
