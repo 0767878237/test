@@ -15,7 +15,9 @@ from crawl_runner import create_and_run_task
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.cache import never_cache
 from functools import wraps
-
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 # block cache and protect views
 def login_required_no_cache(view_func):
     @wraps(view_func)
@@ -188,9 +190,7 @@ def export_data(request, task_id):
     wb.save(response)
     return response
 
-
 #========================= SIGN IN ============================
-
 
 def sign_in(request):
     return render(request, 'crawler_app/sign_in.html')
@@ -246,3 +246,75 @@ def register_user(request):
 def logout(request):
     request.session.flush()  # Xoá toàn bộ session
     return redirect('sign_in')  # Quay về trang đăng nhập
+
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.shortcuts import render, redirect
+#========================= RESET PASSWORD ============================
+def reset_password(request):
+    return render(request, 'crawler_app/reset_password.html')
+
+def password_reset_request(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            # Kiểm tra xem user có tồn tại không
+            user = User.objects.get(email=email)
+            
+            # Tạo token reset mật khẩu
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+
+            # URL chứa token để reset mật khẩu
+            reset_url = request.build_absolute_uri(f'/new_password/{user.id}/{token}/')
+            
+            # Gửi email với link reset mật khẩu
+            subject = 'Reset Your Password'
+            message = f'Click here to reset your password: {reset_url}'
+            send_mail(subject, message, 'no-reply@yourdomain.com', [email])
+            
+            messages.success(request, 'A password reset link has been sent to your email.')
+            return redirect('home')  # Quay về trang chủ sau khi gửi email
+        except User.DoesNotExist:
+            messages.error(request, 'No account found with that email.')
+            return redirect('password_reset_request')
+    
+    return render(request, 'reset_password.html')
+#========================= NEW PASSWORD ============================
+def new_password(request, user_id, token):
+    try:
+        user = User.objects.get(id=user_id)
+        token_generator = PasswordResetTokenGenerator()
+        
+        # Kiểm tra token có hợp lệ không
+        if token_generator.check_token(user, token):
+            if request.method == 'POST':
+                new_password = request.POST.get('new_password')
+                confirm_password = request.POST.get('confirm_password')
+                
+                if new_password == confirm_password:
+                    user.set_password(new_password)
+                    user.save()
+                    messages.success(request, 'Your password has been updated successfully!')
+                    return redirect('login')
+                else:
+                    messages.error(request, 'Passwords do not match.')
+        else:
+            messages.error(request, 'The reset link is invalid or has expired.')
+            return redirect('password_reset_request')
+    except User.DoesNotExist:
+        messages.error(request, 'User not found.')
+        return redirect('password_reset_request')
+    
+    return render(request, 'new_password.html', {'token': token})
+# def new_password(request):
+#     if request.method == 'POST':
+#         password = request.POST.get('password')
+#         confirm_password = request.POST.get('confirm-password')
+
+#         if password != confirm_password:
+#             return render(request, 'crawler_app/new_password.html', {'error': 'Passwords do not match!'})
+#         return redirect('sign_in')
+#     return render(request, 'crawler_app/new_password.html')
