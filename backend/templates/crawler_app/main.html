@@ -106,7 +106,7 @@ License: For each use you must have a valid license purchased only from above li
 											</span>
 											<div class="menu-sub menu-sub-accordion menu-active-bg">
 												<div class="menu-item">
-													<a class="menu-link" href="../../demo1/dist/authentication/flows/basic/sign-in.html">
+													<a class="menu-link" href="{% url 'login' %}">
 														<span class="menu-bullet">
 															<span class="bullet bullet-dot"></span>
 														</span>
@@ -114,7 +114,7 @@ License: For each use you must have a valid license purchased only from above li
 													</a>
 												</div>
 												<div class="menu-item">
-													<a class="menu-link" href="../../demo1/dist/authentication/flows/basic/sign-up.html">
+													<a class="menu-link" href="{% url 'signup' %}">
 														<span class="menu-bullet">
 															<span class="bullet bullet-dot"></span>
 														</span>
@@ -5787,44 +5787,5 @@ License: For each use you must have a valid license purchased only from above li
 		<!--end::Javascript-->
 	</body>
 	<!--end::Body-->
-	<!-- <script>
-		document.addEventListener('DOMContentLoaded', function () {
-			const statusSelect = document.querySelector('[data-kt-user-table-filter="role"]');
-			const applyButton = document.querySelector('[data-kt-user-table-filter="filter"]');
-			const resetButton = document.querySelector('[data-kt-user-table-filter="reset"]');
-			const rows = document.querySelectorAll('tbody tr');
-		
-			function applyFilter() {
-				const selectedStatus = statusSelect.value.toLowerCase().trim();
-				rows.forEach(row => {
-					const rowStatus = (row.getAttribute('data-status') || '').toLowerCase().trim();
-					const matchStatus = !selectedStatus || rowStatus === selectedStatus;
-
-					console.log('Row:', rowStatus, 'Match:', matchStatus);
-
-					row.style.display = matchStatus ? '' : 'none';
-				});
-			}
-		
-			function resetFilter() {
-				statusSelect.value = '';
-				if (window.jQuery) {
-					$(statusSelect).trigger('change');
-				}
-		
-				rows.forEach(row => row.style.display = '');
-			}
-		
-			applyButton.addEventListener('click', function (e) {
-				e.preventDefault();
-				applyFilter();
-			});
-		
-			resetButton.addEventListener('click', function (e) {
-				e.preventDefault();
-				resetFilter();
-			});
-		});
-		</script> -->
 		
 </html>

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from backend.models import CrawlTask, BusinessData
+from backend.models import CrawlTask, BusinessData, Login
 from sqlalchemy.orm import sessionmaker
 # from .forms import CrawlTaskForm
 from django.core.files.storage import FileSystemStorage
@@ -13,6 +13,7 @@ from django.contrib import messages
 from django.db import connection
 from crawl_runner import create_and_run_task
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.hashers import make_password
 # show main page
 def main(request):
     tasks = CrawlTask.objects.all().order_by('-created_at')  # Lấy dữ liệu để hiển thị trong bảng
@@ -28,13 +29,42 @@ def index(request):
 
 def login(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+        username = request.POST.get('username')  # Có thể là email
         password = request.POST.get('password')
-        if username == 'admin' and password == 'admin':
-            return redirect('home')  # Redirect to the main page after successful login
-        else:
-            messages.error(request, 'Invalid username or password.')
-    return render(request, 'crawler_app/sign_up.html')  # Render the login page
+        
+        try:
+            user = Login.objects.get(email=username)
+            # Nếu bạn đã hash password khi signup:
+            if make_password(password, user.password):
+                return redirect('home')
+            else:
+                messages.error(request, 'Mật khẩu không đúng.')
+        except Login.DoesNotExist:
+            messages.error(request, 'Người dùng không tồn tại.')
+    return render(request, 'crawler_app/sign_in.html')
+
+def signup(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        # Lưu thông tin người dùng vào cơ sở dữ liệu
+        user = Login(email=email, password=make_password(password))
+        user.save()
+        messages.success(request, 'Đăng ký thành công.')
+        return redirect('home')  # Redirect to the main page after successful signup
+    return render(request, 'crawler_app/sign_up.html')  # Render the signup page
+
+def fg_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        # Kiểm tra xem email có tồn tại trong cơ sở dữ liệu không
+        try:
+            user = Login.objects.get(email=email)
+            # Gửi email khôi phục mật khẩu (cần cài đặt thêm)
+            messages.success(request, 'Email khôi phục mật khẩu đã được gửi.')
+        except Login.DoesNotExist:
+            messages.error(request, 'Email không tồn tại.')
+    return render(request, 'crawler_app/fg_password.html')  # Render the password recovery page
 
 # create new tasks
 def create_task(request):
