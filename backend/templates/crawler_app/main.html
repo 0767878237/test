@@ -50,7 +50,7 @@ License: For each use you must have a valid license purchased only from above li
 					<!--begin::Brand-->
 					<div class="aside-logo flex-column-auto" id="kt_aside_logo">
 						<!--begin::Logo-->
-						<a href="#">
+						<a href="../../demo1/dist/index.html">
 							<img alt="Logo" src="{% static 'demo1/dist/assets/media/logos/logo-1-dark.svg' %}" class="h-25px logo" />
 						</a>
 						<!--end::Logo-->
@@ -76,10 +76,9 @@ License: For each use you must have a valid license purchased only from above li
 							<div class="menu menu-column menu-title-gray-800 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500" id="#kt_aside_menu" data-kt-menu="true">
 								<div class="menu-item">
 									<div class="menu-content pb-2">
-										<span class="menu-section text-muted text-uppercase fs-8 ls-1">Dashboard</span>
+										<span class="menu-section text-muted text-uppercase fs-8 ls-1">Tasks List</span>
 									</div>
 								</div>
-								
 
 								<div data-kt-menu-trigger="click" class="menu-item here show menu-accordion mb-1">
 									<span class="menu-link">
@@ -107,19 +106,11 @@ License: For each use you must have a valid license purchased only from above li
 											</span>
 											<div class="menu-sub menu-sub-accordion">
 												<div class="menu-item">
-													<a class="menu-link active" href="././templates/crawler_app/main.html">
+													<a class="menu-link active" href="#">
 														<span class="menu-bullet">
 															<span class="bullet bullet-dot"></span>
 														</span>
 														<span class="menu-title">Tasks List</span>
-													</a>
-												</div>
-												<div class="menu-item">
-													<a class="menu-link" href="../../demo1/dist/apps/user-management/users/view.html">
-														<span class="menu-bullet">
-															<span class="bullet bullet-dot"></span>
-														</span>
-														<span class="menu-title">View Task</span>
 													</a>
 												</div>
 											</div>
@@ -156,7 +147,7 @@ License: For each use you must have a valid license purchased only from above li
 							<!--end::Aside mobile toggle-->
 							<!--begin::Mobile logo-->
 							<div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
-								<a href="#" class="d-lg-none">
+								<a href="../../demo1/dist/index.html" class="d-lg-none">
 									<img alt="Logo" src="{% static 'demo1/dist/assets/media/logos/logo-2.svg' %}" class="h-30px" />
 								</a>
 							</div>
@@ -169,11 +160,6 @@ License: For each use you must have a valid license purchased only from above li
 									<div class="header-menu align-items-stretch" data-kt-drawer="true" data-kt-drawer-name="header-menu" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="end" data-kt-drawer-toggle="#kt_header_menu_mobile_toggle" data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_body', lg: '#kt_header_nav'}">
 										<!--begin::Menu-->
 										<div class="menu menu-lg-rounded menu-column menu-lg-row menu-state-bg menu-title-gray-700 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-400 fw-bold my-5 my-lg-0 align-items-stretch" id="#kt_header_menu" data-kt-menu="true">
-											<div class="menu-item me-lg-1">
-												<a class="menu-link py-3" href="#">
-													<span class="menu-title">Dashboard</span>
-												</a>
-											</div>
 											<div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
 												
 												<div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-rounded-0 py-lg-4 w-lg-225px">
@@ -2424,17 +2410,8 @@ License: For each use you must have a valid license purchased only from above li
 
 													<!-- Task Info -->
 													<td class="d-flex align-items-center">												
-														<div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-															<a href="../../demo1/dist/apps/user-management/users/view.html" class="text-gray-800 text-hover-primary mb-1">
-																<div class="symbol-label">
-																	<img src="{% static 'demo1/dist/assets/media/avatars/150-1.jpg' %}" alt="Task" class="w-100" />
-																</div>
-															</a>
-														</div>
 														<div class="d-flex flex-column">
-															<a href="../../demo1/dist/apps/user-management/users/view.html" class="text-gray-800 text-hover-primary mb-1">
-																<span>Task #{{ task.id }}</span>
-															</a>
+															<span>Task {{ task.id }}</span>
 															<span>{{ task.url_filter }}</span>
 														</div>
 													</td>
