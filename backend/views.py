@@ -196,7 +196,8 @@ def register_user(request):
         email = request.POST.get('email')
         passw = request.POST.get('passw')
         confirm = request.POST.get('c_passw')
-        
+        if email == "" or passw == "":
+            return render(request, 'sign_up.html')
         try:
             temp = Login.objects.get(email=email)
         except Login.DoesNotExist:
