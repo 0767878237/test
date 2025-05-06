@@ -44,7 +44,7 @@ License: For each use you must have a valid license purchased only from above li
 				<!--begin::Content-->
 				<div class="d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20">
 					<!--begin::Logo-->
-					<a href="../../demo1/dist/index.html" class="mb-12">
+					<a href="{% url 'home' %}" class="mb-12">
 						<img alt="Logo" src="{% static 'demo1/dist/assets/media/logos/logo-1.svg' %}" class="h-40px" />
 					</a>
 					<!--end::Logo-->
@@ -60,14 +60,10 @@ License: For each use you must have a valid license purchased only from above li
 								<!--end::Title-->
 								<!--begin::Link-->
 								<div class="text-gray-400 fw-bold fs-4">Already have an account?
-								<a href="../../demo1/dist/authentication/flows/basic/sign-in.html" class="link-primary fw-bolder">Sign in here</a></div>
+								<a href="{% url 'sign_in' %}" class="link-primary fw-bolder">Sign in here</a></div>
 								<!--end::Link-->
 							</div>
 							<!--end::Heading-->
-							<!--begin::Action-->
-							<button type="button" class="btn btn-light-primary fw-bolder w-100 mb-10">
-							<img alt="Logo" src="{% static 'demo1/dist/assets/media/svg/brand-logos/google-icon.svg' %}" class="h-20px me-3" />Sign in with Google</button>
-							<!--end::Action-->
 							<!--begin::Separator-->
 							<div class="d-flex align-items-center mb-10">
 								<div class="border-bottom border-gray-300 mw-50 w-100"></div>

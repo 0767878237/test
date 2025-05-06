@@ -10,8 +10,15 @@ urlpatterns = [
     
     path('sign_up/', views.sign_up, name='sign_up'),
     path('register_user/', views.register_user, name='register_user'),
+
     path('logout/', views.logout, name='logout'),
-    
+
+    # path('new_password/', views.new_password, name='new_password'),
+    path('new_password/', views.new_password, name='new_password'),
+
+    path('reset_password/', views.reset_password, name='reset_password'),
+    path('password_reset_request/', views.password_reset_request, name='password_reset_request'),
+
     path('create-task/', views.create_task, name='create_task'), 
     path('demo1/dist/index.html', views.index, name='dashboard'),
     

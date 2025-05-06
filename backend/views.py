@@ -15,7 +15,9 @@ from crawl_runner import create_and_run_task
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.cache import never_cache
 from functools import wraps
-
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 # block cache and protect views
 def login_required_no_cache(view_func):
     @wraps(view_func)
@@ -188,9 +190,7 @@ def export_data(request, task_id):
     wb.save(response)
     return response
 
-
 #========================= SIGN IN ============================
-
 
 def sign_in(request):
     return render(request, 'crawler_app/sign_in.html')
@@ -245,3 +245,51 @@ def register_user(request):
 def logout(request):
     request.session.flush()  # Xoá toàn bộ session
     return redirect('sign_in')  # Quay về trang đăng nhập
+
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.shortcuts import render, redirect
+#========================= RESET PASSWORD ============================
+def reset_password(request):
+    return render(request, 'crawler_app/reset_password.html')
+
+def password_reset_request(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = Login.objects.get(email=email)
+            id = user.id
+            return render(request, 'crawler_app/new_password.html', {'id': id})
+        except Login.DoesNotExist:
+            messages.error(request, 'Email không tồn tại.')
+            return redirect('reset_password')
+    return render(request, 'crawler_app/reset_password.html')
+#========================= NEW PASSWORD ============================
+def new_password(request):
+    try:
+        if request.method == 'POST':
+            id = request.POST.get('user_id')
+            password = request.POST.get('password')
+            confirm = request.POST.get('confirm-password')
+            user = Login.objects.get(id=id)
+            if password == confirm:
+                user.password = confirm  # Bạn nên mã hóa mật khẩu nếu dùng thật
+                user.save()
+                messages.success(request, 'Đã đặt lại mật khẩu thành công!')
+                return redirect('sign_in')
+            else:
+                messages.error(request, 'Mật khẩu không khớp.')
+    except Login.DoesNotExist:
+        messages.error(request, 'Người dùng không tồn tại.')
+    return render(request, 'crawler_app/new_password.html')
+# def new_password(request):
+#     if request.method == 'POST':
+#         password = request.POST.get('password')
+#         confirm_password = request.POST.get('confirm-password')
+
+#         if password != confirm_password:
+#             return render(request, 'crawler_app/new_password.html', {'error': 'Passwords do not match!'})
+#         return redirect('sign_in')
+#     return render(request, 'crawler_app/new_password.html')
